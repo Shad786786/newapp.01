@@ -196,7 +196,7 @@ def fetch_option_chain(symbol, retries=3):
 
     for i in range(retries):
         try:
-            session.get(url_home, timeout=5)
+            session.get(url_home, timeout=10)
             time.sleep(1.5)
             response = session.get(url_api, timeout=10)
             response.raise_for_status()
