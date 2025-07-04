@@ -179,8 +179,6 @@ st.set_page_config(page_title="Nifty Full Option Chain", layout="wide")
 st.title("📊 Nifty Option Chain — Detailed Data with OI, IV, Bid/Ask")
 
 symbol = "NIFTY"
-
-# 👇 REPLACEMENT FOR nse_optionchain_scrapper
 def fetch_option_chain(symbol, retries=3):
     url_home = "https://www.nseindia.com"
     url_api = f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}"
@@ -207,6 +205,7 @@ def fetch_option_chain(symbol, retries=3):
     raise Exception("Failed to fetch Option Chain data after retries.")
 
 if st.button("🔄 Fetch Option Chain Data"):
+    with st.spinner("🔄 Please wait... Fetching data from NSE"):
     try:
         oc_data = fetch_option_chain(symbol)
         expiry_date = oc_data["records"]["expiryDates"][0]
