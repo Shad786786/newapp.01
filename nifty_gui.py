@@ -168,18 +168,47 @@ if st.button("📥 Fetch PFC Data"):
             
             
             # --- Fetch F&O (Futures + Options) Data ---
+from nsepython import nse_optionchain_scrapper
+
 import streamlit as st
 import pandas as pd
-from nsepython import nse_optionchain_scrapper
+import requests
+import time
 
 st.set_page_config(page_title="Nifty Full Option Chain", layout="wide")
 st.title("📊 Nifty Option Chain — Detailed Data with OI, IV, Bid/Ask")
 
 symbol = "NIFTY"
 
+# 👇 REPLACEMENT FOR nse_optionchain_scrapper
+def fetch_option_chain(symbol, retries=3):
+    url_home = "https://www.nseindia.com"
+    url_api = f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}"
+
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.nseindia.com/option-chain"
+    }
+
+    session = requests.Session()
+    session.headers.update(headers)
+
+    for i in range(retries):
+        try:
+            session.get(url_home, timeout=5)
+            time.sleep(1.5)
+            response = session.get(url_api, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            st.warning(f"Retry {i+1}/{retries} failed: {e}")
+            time.sleep(2)
+    raise Exception("Failed to fetch Option Chain data after retries.")
+
 if st.button("🔄 Fetch Option Chain Data"):
     try:
-        oc_data = nse_optionchain_scrapper(symbol)
+        oc_data = fetch_option_chain(symbol)
         expiry_date = oc_data["records"]["expiryDates"][0]
         underlying_value = oc_data["records"]["underlyingValue"]
         data = oc_data["records"]["data"]
@@ -216,7 +245,6 @@ if st.button("🔄 Fetch Option Chain Data"):
                     "Open Interest": ce.get("openInterest"),
                     "Total Buy Quantity": ce.get("totalBuyQuantity"),
                     "Total Sell Quantity": ce.get("totalSellQuantity"),
-                    "Total Traded Volume": ce.get("totalTradedVolume"),
                     "Underlying Value": underlying_value
                 })
 
