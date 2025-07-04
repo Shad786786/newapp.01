@@ -203,88 +203,88 @@ def fetch_option_chain(symbol, retries=3):
             st.warning(f"Retry {i+1}/{retries} failed: {e}")
             time.sleep(2)
     raise Exception("Failed to fetch Option Chain data after retries.")
-
 if st.button("🔄 Fetch Option Chain Data"):
     with st.spinner("🔄 Please wait... Fetching data from NSE"):
-    try:
-        oc_data = fetch_option_chain(symbol)
-        expiry_date = oc_data["records"]["expiryDates"][0]
-        underlying_value = oc_data["records"]["underlyingValue"]
-        data = oc_data["records"]["data"]
+        try:
+            oc_data = fetch_option_chain(symbol)
+            expiry_date = oc_data["records"]["expiryDates"][0]
+            underlying_value = oc_data["records"]["underlyingValue"]
+            data = oc_data["records"]["data"]
 
-        rows = []
+            rows = []
 
-        for item in data:
-            strike = item.get("strikePrice")
+            for item in data:
+                strike = item.get("strikePrice")
 
-            if "CE" in item:
-                ce = item["CE"]
-                rows.append({
-                    "Instrument Type": ce.get("instrumentType", "OPTIDX"),
-                    "Expiry Date": ce.get("expiryDate", expiry_date),
-                    "Option": "CE",
-                    "Strike": strike,
-                    "Open": ce.get("openPrice"),
-                    "High": ce.get("highPrice"),
-                    "Low": ce.get("lowPrice"),
-                    "Close": ce.get("closePrice"),
-                    "Prev. Close": ce.get("prevClose"),
-                    "Last": ce.get("lastPrice"),
-                    "Chng": ce.get("change"),
-                    "%Chng": ce.get("pChange"),
-                    "Volume (Contracts)": ce.get("numberOfContractsTraded"),
-                    "Value (₹ Lakhs)": ce.get("totalTradedVolume"),
-                    "Ask Price": ce.get("askPrice"),
-                    "Ask Qty": ce.get("askQty"),
-                    "Bid Price": ce.get("bidprice"),
-                    "Bid Qty": ce.get("bidQty"),
-                    "Change in Open Interest": ce.get("changeinOpenInterest"),
-                    "% Change in OI": ce.get("pchangeinOpenInterest"),
-                    "Implied Volatility": ce.get("impliedVolatility"),
-                    "Open Interest": ce.get("openInterest"),
-                    "Total Buy Quantity": ce.get("totalBuyQuantity"),
-                    "Total Sell Quantity": ce.get("totalSellQuantity"),
-                    "Underlying Value": underlying_value
-                })
+                if "CE" in item:
+                    ce = item["CE"]
+                    rows.append({
+                        "Instrument Type": ce.get("instrumentType", "OPTIDX"),
+                        "Expiry Date": ce.get("expiryDate", expiry_date),
+                        "Option": "CE",
+                        "Strike": strike,
+                        "Open": ce.get("openPrice"),
+                        "High": ce.get("highPrice"),
+                        "Low": ce.get("lowPrice"),
+                        "Close": ce.get("closePrice"),
+                        "Prev. Close": ce.get("prevClose"),
+                        "Last": ce.get("lastPrice"),
+                        "Chng": ce.get("change"),
+                        "%Chng": ce.get("pChange"),
+                        "Volume (Contracts)": ce.get("numberOfContractsTraded"),
+                        "Value (₹ Lakhs)": ce.get("totalTradedVolume"),
+                        "Ask Price": ce.get("askPrice"),
+                        "Ask Qty": ce.get("askQty"),
+                        "Bid Price": ce.get("bidprice"),
+                        "Bid Qty": ce.get("bidQty"),
+                        "Change in Open Interest": ce.get("changeinOpenInterest"),
+                        "% Change in OI": ce.get("pchangeinOpenInterest"),
+                        "Implied Volatility": ce.get("impliedVolatility"),
+                        "Open Interest": ce.get("openInterest"),
+                        "Total Buy Quantity": ce.get("totalBuyQuantity"),
+                        "Total Sell Quantity": ce.get("totalSellQuantity"),
+                        "Underlying Value": underlying_value
+                    })
 
-            if "PE" in item:
-                pe = item["PE"]
-                rows.append({
-                    "Instrument Type": pe.get("instrumentType", "OPTIDX"),
-                    "Expiry Date": pe.get("expiryDate", expiry_date),
-                    "Option": "PE",
-                    "Strike": strike,
-                    "Open": pe.get("openPrice"),
-                    "High": pe.get("highPrice"),
-                    "Low": pe.get("lowPrice"),
-                    "Close": pe.get("closePrice"),
-                    "Prev. Close": pe.get("prevClose"),
-                    "Last": pe.get("lastPrice"),
-                    "Chng": pe.get("change"),
-                    "%Chng": pe.get("pChange"),
-                    "Volume (Contracts)": pe.get("numberOfContractsTraded"),
-                    "Value (₹ Lakhs)": pe.get("totalTradedVolume"),
-                    "Ask Price": pe.get("askPrice"),
-                    "Ask Qty": pe.get("askQty"),
-                    "Bid Price": pe.get("bidprice"),
-                    "Bid Qty": pe.get("bidQty"),
-                    "Change in Open Interest": pe.get("changeinOpenInterest"),
-                    "% Change in OI": pe.get("pchangeinOpenInterest"),
-                    "Implied Volatility": pe.get("impliedVolatility"),
-                    "Open Interest": pe.get("openInterest"),
-                    "Total Buy Quantity": pe.get("totalBuyQuantity"),
-                    "Total Sell Quantity": pe.get("totalSellQuantity"),
-                    "Underlying Value": underlying_value
-                })
+                if "PE" in item:
+                    pe = item["PE"]
+                    rows.append({
+                        "Instrument Type": pe.get("instrumentType", "OPTIDX"),
+                        "Expiry Date": pe.get("expiryDate", expiry_date),
+                        "Option": "PE",
+                        "Strike": strike,
+                        "Open": pe.get("openPrice"),
+                        "High": pe.get("highPrice"),
+                        "Low": pe.get("lowPrice"),
+                        "Close": pe.get("closePrice"),
+                        "Prev. Close": pe.get("prevClose"),
+                        "Last": pe.get("lastPrice"),
+                        "Chng": pe.get("change"),
+                        "%Chng": pe.get("pChange"),
+                        "Volume (Contracts)": pe.get("numberOfContractsTraded"),
+                        "Value (₹ Lakhs)": pe.get("totalTradedVolume"),
+                        "Ask Price": pe.get("askPrice"),
+                        "Ask Qty": pe.get("askQty"),
+                        "Bid Price": pe.get("bidprice"),
+                        "Bid Qty": pe.get("bidQty"),
+                        "Change in Open Interest": pe.get("changeinOpenInterest"),
+                        "% Change in OI": pe.get("pchangeinOpenInterest"),
+                        "Implied Volatility": pe.get("impliedVolatility"),
+                        "Open Interest": pe.get("openInterest"),
+                        "Total Buy Quantity": pe.get("totalBuyQuantity"),
+                        "Total Sell Quantity": pe.get("totalSellQuantity"),
+                        "Underlying Value": underlying_value
+                    })
 
-        df = pd.DataFrame(rows)
-        df = df.dropna(subset=["Strike"]).sort_values(by=["Strike", "Option"])
+            df = pd.DataFrame(rows)
+            df = df.dropna(subset=["Strike"]).sort_values(by=["Strike", "Option"])
 
-        st.success("✅ Option Chain Data Fetched")
-        st.dataframe(df)
+            st.success("✅ Option Chain Data Fetched")
+            st.dataframe(df)
 
-        csv = df.to_csv(index=False).encode("utf-8")
-        st.download_button("⬇️ Download CSV", csv, file_name="nifty_option_chain_full.csv", mime="text/csv")
+            csv = df.to_csv(index=False).encode("utf-8")
+            st.download_button("⬇️ Download CSV", csv, file_name="nifty_option_chain_full.csv", mime="text/csv")
 
-    except Exception as e:
-        st.error(f"❌ Error: {e}")
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+                    
