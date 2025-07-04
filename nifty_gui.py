@@ -132,3 +132,133 @@ if st.button("📥 Fetch Data"):
             )
         else:
             st.error("❌ No data found for selected month.")
+            # ✅ Power Finance Corporation Ltd. Section
+st.header("📉 Power Finance Corporation Ltd. (PFC) Data")
+
+col1, col2 = st.columns(2)
+with col1:
+    start_pfc = st.date_input("Start Date", datetime.now() - timedelta(days=30), key="start_pfc")
+with col2:
+    end_pfc = st.date_input("End Date", datetime.now(), key="end_pfc")
+
+if st.button("📥 Fetch PFC Data"):
+    with st.spinner("Fetching PFC data..."):
+        symbol = "PFC.NS"
+        isin = "INE134E01011"
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(start=start_pfc, end=end_pfc + timedelta(days=1), interval="1d")
+
+        if not data.empty:
+            data.reset_index(inplace=True)
+            data["Symbol"] = "PFC"
+            data["ISIN"] = isin
+            data = data[["Date", "Symbol", "ISIN", "Open", "High", "Low", "Close", "Volume"]]
+            st.success(f"✅ Fetched {len(data)} rows of data.")
+            st.dataframe(data)
+            csv = data.to_csv(index=False).encode("utf-8")
+            filename = f"PFC_{start_pfc}_to_{end_pfc}.csv"
+            st.download_button("⬇️ Download CSV", csv, file_name=filename, mime="text/csv")
+        else:
+            st.warning("⚠️ No data available for the selected date range.")
+            
+            
+            
+            
+            
+            
+            
+            # --- Fetch F&O (Futures + Options) Data ---
+import streamlit as st
+import pandas as pd
+from nsepython import nse_optionchain_scrapper
+
+st.set_page_config(page_title="Nifty Full Option Chain", layout="wide")
+st.title("📊 Nifty Option Chain — Detailed Data with OI, IV, Bid/Ask")
+
+symbol = "NIFTY"
+
+if st.button("🔄 Fetch Option Chain Data"):
+    try:
+        oc_data = nse_optionchain_scrapper(symbol)
+        expiry_date = oc_data["records"]["expiryDates"][0]
+        underlying_value = oc_data["records"]["underlyingValue"]
+        data = oc_data["records"]["data"]
+
+        rows = []
+
+        for item in data:
+            strike = item.get("strikePrice")
+
+            if "CE" in item:
+                ce = item["CE"]
+                rows.append({
+                    "Instrument Type": ce.get("instrumentType", "OPTIDX"),
+                    "Expiry Date": ce.get("expiryDate", expiry_date),
+                    "Option": "CE",
+                    "Strike": strike,
+                    "Open": ce.get("openPrice"),
+                    "High": ce.get("highPrice"),
+                    "Low": ce.get("lowPrice"),
+                    "Close": ce.get("closePrice"),
+                    "Prev. Close": ce.get("prevClose"),
+                    "Last": ce.get("lastPrice"),
+                    "Chng": ce.get("change"),
+                    "%Chng": ce.get("pChange"),
+                    "Volume (Contracts)": ce.get("numberOfContractsTraded"),
+                    "Value (₹ Lakhs)": ce.get("totalTradedVolume"),
+                    "Ask Price": ce.get("askPrice"),
+                    "Ask Qty": ce.get("askQty"),
+                    "Bid Price": ce.get("bidprice"),
+                    "Bid Qty": ce.get("bidQty"),
+                    "Change in Open Interest": ce.get("changeinOpenInterest"),
+                    "% Change in OI": ce.get("pchangeinOpenInterest"),
+                    "Implied Volatility": ce.get("impliedVolatility"),
+                    "Open Interest": ce.get("openInterest"),
+                    "Total Buy Quantity": ce.get("totalBuyQuantity"),
+                    "Total Sell Quantity": ce.get("totalSellQuantity"),
+                    "Total Traded Volume": ce.get("totalTradedVolume"),
+                    "Underlying Value": underlying_value
+                })
+
+            if "PE" in item:
+                pe = item["PE"]
+                rows.append({
+                    "Instrument Type": pe.get("instrumentType", "OPTIDX"),
+                    "Expiry Date": pe.get("expiryDate", expiry_date),
+                    "Option": "PE",
+                    "Strike": strike,
+                    "Open": pe.get("openPrice"),
+                    "High": pe.get("highPrice"),
+                    "Low": pe.get("lowPrice"),
+                    "Close": pe.get("closePrice"),
+                    "Prev. Close": pe.get("prevClose"),
+                    "Last": pe.get("lastPrice"),
+                    "Chng": pe.get("change"),
+                    "%Chng": pe.get("pChange"),
+                    "Volume (Contracts)": pe.get("numberOfContractsTraded"),
+                    "Value (₹ Lakhs)": pe.get("totalTradedVolume"),
+                    "Ask Price": pe.get("askPrice"),
+                    "Ask Qty": pe.get("askQty"),
+                    "Bid Price": pe.get("bidprice"),
+                    "Bid Qty": pe.get("bidQty"),
+                    "Change in Open Interest": pe.get("changeinOpenInterest"),
+                    "% Change in OI": pe.get("pchangeinOpenInterest"),
+                    "Implied Volatility": pe.get("impliedVolatility"),
+                    "Open Interest": pe.get("openInterest"),
+                    "Total Buy Quantity": pe.get("totalBuyQuantity"),
+                    "Total Sell Quantity": pe.get("totalSellQuantity"),
+                    "Underlying Value": underlying_value
+                })
+
+        df = pd.DataFrame(rows)
+        df = df.dropna(subset=["Strike"]).sort_values(by=["Strike", "Option"])
+
+        st.success("✅ Option Chain Data Fetched")
+        st.dataframe(df)
+
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.download_button("⬇️ Download CSV", csv, file_name="nifty_option_chain_full.csv", mime="text/csv")
+
+    except Exception as e:
+        st.error(f"❌ Error: {e}")
+
