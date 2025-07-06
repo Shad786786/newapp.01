@@ -179,16 +179,23 @@ st.set_page_config(page_title="Nifty Full Option Chain", layout="wide")
 st.title("📊 Nifty Option Chain — Detailed Data with OI, IV, Bid/Ask")
 
 symbol = "NIFTY"
+def fetch_option_chain(symbol="NIFTY", retries=3):
+    import requests
+    import time
 
-def fetch_option_chain(symbol, retries=3):
     url_home = "https://www.nseindia.com"
     url_api = f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}"
 
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept": "*/*",
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/122.0.0.0 Safari/537.36"
+        ),
         "Accept-Language": "en-US,en;q=0.9",
-        "Referer": f"https://www.nseindia.com/option-chain",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept": "application/json, text/plain, */*",
+        "Referer": "https://www.nseindia.com/option-chain",
         "Connection": "keep-alive",
     }
 
@@ -197,16 +204,16 @@ def fetch_option_chain(symbol, retries=3):
 
     for i in range(retries):
         try:
-            # Step 1: Visit home page to set cookies
-            home_response = session.get(url_home, timeout=20)
-            if home_response.status_code != 200:
-                raise Exception("Failed to fetch homepage for cookie setup.")
+            # Step 1: Visit home page to get cookies
+            response_home = session.get(url_home, timeout=10)
+            if response_home.status_code != 200:
+                raise Exception("NSE homepage access failed.")
 
-            time.sleep(1.5)  # Delay to mimic human behavior
+            time.sleep(1.5)  # Wait to mimic human behavior
 
-            # Step 2: Use same session to call API
-            response = session.get(url_api, timeout=20)
-            response.raise_for_status()
+            # Step 2: Call Option Chain API with session
+            response = session.get(url_api, timeout=10)
+            response.raise_for_status()  # Raise error for bad responses
 
             return response.json()
 
@@ -214,7 +221,7 @@ def fetch_option_chain(symbol, retries=3):
             st.warning(f"Retry {i+1}/{retries} failed: {e}")
             time.sleep(2)
 
-    raise Exception("Failed to fetch Option Chain data after retries.")
+    raise Exception("❌ All retries failed. NSE API access blocked or modified.")
 
  
 
