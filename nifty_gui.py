@@ -3,7 +3,7 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Replace with full Nifty 150 symbols
+# Replace with full Nifty 125 symbols
 nifty_150_symbols = [
     'RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'ICICIBANK.NS',
     'HINDUNILVR.NS', 'ITC.NS', 'KOTAKBANK.NS', 'LT.NS', 'SBIN.NS',
@@ -205,14 +205,14 @@ def fetch_option_chain(symbol="NIFTY", retries=3):
     for i in range(retries):
         try:
             # Step 1: Visit home page to get cookies
-            response_home = session.get(url_home, timeout=10)
+            response_home = session.get(url_home, timeout=50)
             if response_home.status_code != 200:
                 raise Exception("NSE homepage access failed.")
 
             time.sleep(1.5)  # Wait to mimic human behavior
 
             # Step 2: Call Option Chain API with session
-            response = session.get(url_api, timeout=10)
+            response = session.get(url_api, timeout=50)
             response.raise_for_status()  # Raise error for bad responses
 
             return response.json()
