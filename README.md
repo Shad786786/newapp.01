@@ -61,6 +61,7 @@ streamlit run app.py
 
 
 #📌 Sample Output
+
 ✅ Nifty 125 table with daily/monthly OHLCV
 
 ✅ Power Finance Corp data with ISIN
