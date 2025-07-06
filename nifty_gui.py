@@ -185,9 +185,11 @@ def fetch_option_chain(symbol, retries=3):
     url_api = f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}"
 
     headers = {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "Accept": "*/*",
         "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.nseindia.com/option-chain"
+        "Referer": f"https://www.nseindia.com/option-chain",
+        "Connection": "keep-alive",
     }
 
     session = requests.Session()
@@ -195,15 +197,25 @@ def fetch_option_chain(symbol, retries=3):
 
     for i in range(retries):
         try:
-            session.get(url_home, timeout=50)
-            time.sleep(1.5)
-            response = session.get(url_api, timeout=50)
+            # Step 1: Visit home page to set cookies
+            home_response = session.get(url_home, timeout=20)
+            if home_response.status_code != 200:
+                raise Exception("Failed to fetch homepage for cookie setup.")
+
+            time.sleep(1.5)  # Delay to mimic human behavior
+
+            # Step 2: Use same session to call API
+            response = session.get(url_api, timeout=20)
             response.raise_for_status()
+
             return response.json()
+
         except Exception as e:
             st.warning(f"Retry {i+1}/{retries} failed: {e}")
             time.sleep(2)
+
     raise Exception("Failed to fetch Option Chain data after retries.")
+
 
 if st.button("🔄 Fetch Option Chain Data"):
     with st.spinner("🔄 Please wait... Fetching data from NSE"):
