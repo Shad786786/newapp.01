@@ -216,6 +216,7 @@ def fetch_option_chain(symbol, retries=3):
 
     raise Exception("Failed to fetch Option Chain data after retries.")
 
+ 
 
 if st.button("🔄 Fetch Option Chain Data"):
     with st.spinner("🔄 Please wait... Fetching data from NSE"):
