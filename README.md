@@ -1,7 +1,9 @@
 ﻿# stock.app
-
+ 
  
  # 📊 Nifty 125 Dashboard — Stock, PFC, and Option Chain Viewer
+ 
+  # LIVE DEMO: https://newapp01-c3aiym4rjvfvdj4jdkmxuv.streamlit.app/
 
 This is a comprehensive Streamlit-based dashboard that allows users to:
 
@@ -61,3 +63,20 @@ streamlit run app.py
    
 # LIVE DEMO: https://newapp01-c3aiym4rjvfvdj4jdkmxuv.streamlit.app/
 
+📌 Sample Output
+✅ Nifty 125 table with daily/monthly OHLCV
+
+✅ Power Finance Corp data with ISIN
+
+✅ Nifty Option Chain with expiry selector and strike-wise data
+
+
+📄 License
+This project is open-source and available under the MIT License.
+
+🙌 Contributions
+Pull requests and suggestions are welcome. If you'd like to add charts, multi-symbol option chains, or sector-wise filtering — feel free to fork and enhance!
+
+💬 Contact
+Created by [SHAD] — [zadahmad321@gmail.com]
+Feel free to connect or reach out for feedback!
