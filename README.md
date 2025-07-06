@@ -59,9 +59,6 @@ pip install -r requirements.txt
 3. Run the Streamlit app:
 streamlit run app.py
 
-           OR
-   
-# LIVE DEMO: https://newapp01-c3aiym4rjvfvdj4jdkmxuv.streamlit.app/
 
 📌 Sample Output
 ✅ Nifty 125 table with daily/monthly OHLCV
@@ -71,12 +68,17 @@ streamlit run app.py
 ✅ Nifty Option Chain with expiry selector and strike-wise data
 
 
-📄 License
+
+# 📄 License
 This project is open-source and available under the MIT License.
 
-🙌 Contributions
+
+
+# 🙌 Contributions
 Pull requests and suggestions are welcome. If you'd like to add charts, multi-symbol option chains, or sector-wise filtering — feel free to fork and enhance!
 
-💬 Contact
+
+
+#💬 Contact
 Created by [SHAD] — [zadahmad321@gmail.com]
 Feel free to connect or reach out for feedback!
