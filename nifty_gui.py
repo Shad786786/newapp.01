@@ -179,6 +179,7 @@ st.set_page_config(page_title="Nifty Full Option Chain", layout="wide")
 st.title("📊 Nifty Option Chain — Detailed Data with OI, IV, Bid/Ask")
 
 symbol = "NIFTY"
+
 def fetch_option_chain(symbol, retries=3):
     url_home = "https://www.nseindia.com"
     url_api = f"https://www.nseindia.com/api/option-chain-indices?symbol={symbol}"
@@ -203,20 +204,30 @@ def fetch_option_chain(symbol, retries=3):
             st.warning(f"Retry {i+1}/{retries} failed: {e}")
             time.sleep(2)
     raise Exception("Failed to fetch Option Chain data after retries.")
+
 if st.button("🔄 Fetch Option Chain Data"):
     with st.spinner("🔄 Please wait... Fetching data from NSE"):
         try:
             oc_data = fetch_option_chain(symbol)
-            expiry_date = oc_data["records"]["expiryDates"][0]
+
+            expiry_dates = oc_data["records"]["expiryDates"]
+            expiry_date = st.selectbox("Select Expiry Date", expiry_dates)
             underlying_value = oc_data["records"]["underlyingValue"]
             data = oc_data["records"]["data"]
 
             rows = []
 
-            for item in data:
+            # Filter data for selected expiry
+            filtered_data = [
+                item for item in data
+                if ("CE" in item and item["CE"].get("expiryDate") == expiry_date) or
+                   ("PE" in item and item["PE"].get("expiryDate") == expiry_date)
+            ]
+
+            for item in filtered_data:
                 strike = item.get("strikePrice")
 
-                if "CE" in item:
+                if "CE" in item and item["CE"].get("expiryDate") == expiry_date:
                     ce = item["CE"]
                     rows.append({
                         "Instrument Type": ce.get("instrumentType", "OPTIDX"),
@@ -235,7 +246,7 @@ if st.button("🔄 Fetch Option Chain Data"):
                         "Value (₹ Lakhs)": ce.get("totalTradedVolume"),
                         "Ask Price": ce.get("askPrice"),
                         "Ask Qty": ce.get("askQty"),
-                        "Bid Price": ce.get("bidprice"),
+                        "Bid Price": ce.get("bidPrice"),  # ✅ Fixed key
                         "Bid Qty": ce.get("bidQty"),
                         "Change in Open Interest": ce.get("changeinOpenInterest"),
                         "% Change in OI": ce.get("pchangeinOpenInterest"),
@@ -246,7 +257,7 @@ if st.button("🔄 Fetch Option Chain Data"):
                         "Underlying Value": underlying_value
                     })
 
-                if "PE" in item:
+                if "PE" in item and item["PE"].get("expiryDate") == expiry_date:
                     pe = item["PE"]
                     rows.append({
                         "Instrument Type": pe.get("instrumentType", "OPTIDX"),
@@ -265,7 +276,7 @@ if st.button("🔄 Fetch Option Chain Data"):
                         "Value (₹ Lakhs)": pe.get("totalTradedVolume"),
                         "Ask Price": pe.get("askPrice"),
                         "Ask Qty": pe.get("askQty"),
-                        "Bid Price": pe.get("bidprice"),
+                        "Bid Price": pe.get("bidPrice"),  # ✅ Fixed key
                         "Bid Qty": pe.get("bidQty"),
                         "Change in Open Interest": pe.get("changeinOpenInterest"),
                         "% Change in OI": pe.get("pchangeinOpenInterest"),
@@ -280,11 +291,11 @@ if st.button("🔄 Fetch Option Chain Data"):
             df = df.dropna(subset=["Strike"]).sort_values(by=["Strike", "Option"])
 
             st.success("✅ Option Chain Data Fetched")
-            st.dataframe(df)
+            st.subheader(f"📅 Expiry Date: {expiry_date} | 💰 Underlying Value: {underlying_value}")
+            st.dataframe(df, use_container_width=True)
 
             csv = df.to_csv(index=False).encode("utf-8")
             st.download_button("⬇️ Download CSV", csv, file_name="nifty_option_chain_full.csv", mime="text/csv")
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
-                    
