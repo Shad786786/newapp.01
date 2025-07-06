@@ -195,13 +195,13 @@ def fetch_option_chain(symbol, retries=3):
     for i in range(retries):
         try:
             session.get(url_home, timeout=50)
-            time.sleep(1.5)
+            time.sleep(5)
             response = session.get(url_api, timeout=50)
             response.raise_for_status()
             return response.json()
         except Exception as e:
             st.warning(f"Retry {i+1}/{retries} failed: {e}")
-            time.sleep(2)
+            time.sleep(7)
     raise Exception("Failed to fetch Option Chain data after retries.")
 if st.button("🔄 Fetch Option Chain Data"):
     with st.spinner("🔄 Please wait... Fetching data from NSE"):
