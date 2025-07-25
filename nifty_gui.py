@@ -203,7 +203,7 @@ def fetch_option_chain(symbol="NIFTY", retries=3):
             response_home = session.get(url_home, timeout=30)
             if response_home.status_code != 200:
                 raise Exception("NSE homepage access failed.")
-            time.sleep(1.5)
+            time.sleep(3)
             response = session.get(url_api, timeout=30)
             response.raise_for_status()
             return response.json()
